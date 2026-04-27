@@ -1,0 +1,66 @@
+{%- comment -%}
+  Snippet: cfg-pendant-fields
+  Param: suffix — '' (Tipo B) ou '-c' (Tipo C)
+{%- endcomment -%}
+
+{%- assign sfx = suffix | default: '' -%}
+
+<div class="cfg-person-fields" id="person-fields{{ sfx }}">
+
+  <p class="cfg-dados-title">DADOS DA GRAVAÇÃO</p>
+
+  <!-- Nome do pet -->
+  <div class="cfg-field">
+    <label for="cfg-pet-name{{ sfx }}" class="cfg-field__label">
+      NOME DO PET <span class="cfg-field__req">*</span>
+    </label>
+    <input
+      type="text"
+      id="cfg-pet-name{{ sfx }}"
+      name="properties[Nome do pet]"
+      placeholder="Ex: Luna"
+      autocomplete="off"
+      required
+      data-field="pet"
+      data-suffix="{{ sfx }}"
+      class="cfg-input"
+    >
+  </div>
+
+  <!-- Nome do tutor -->
+  <div class="cfg-field">
+    <label for="cfg-tutor-name{{ sfx }}" class="cfg-field__label">
+      NOME DO TUTOR <span class="cfg-field__req">*</span>
+    </label>
+    <input
+      type="text"
+      id="cfg-tutor-name{{ sfx }}"
+      name="properties[Nome do tutor]"
+      placeholder="Ex: Maria"
+      autocomplete="name"
+      required
+      data-field="tutor"
+      data-suffix="{{ sfx }}"
+      class="cfg-input"
+    >
+  </div>
+
+  <!-- Telefone -->
+  <div class="cfg-field">
+    <label for="cfg-tutor-phone{{ sfx }}" class="cfg-field__label">
+      TELEFONE <span class="cfg-field__req">*</span>
+    </label>
+    <input
+      type="tel"
+      id="cfg-tutor-phone{{ sfx }}"
+      name="properties[Telefone]"
+      placeholder="(48) 99999-9999"
+      inputmode="numeric"
+      required
+      data-field="phone"
+      data-suffix="{{ sfx }}"
+      class="cfg-input"
+    >
+  </div>
+
+</div>

@@ -1,0 +1,65 @@
+<footer class="site-footer">
+  <div class="site-footer__grid">
+
+    <!-- Brand -->
+    <div class="footer-brand">
+      <div class="footer-brand__logo">Âme</div>
+      <p class="footer-brand__tagline">
+        {{ section.settings.tagline | default: 'Acessórios em couro legítimo feitos à mão com amor para os pets e seus tutores.' }}
+      </p>
+    </div>
+
+    <!-- Nav 1 -->
+    <nav class="footer-nav">
+      <p class="footer-nav__title">{{ section.settings.nav1_title | default: 'Institucional' }}</p>
+      <ul>
+        <li><a href="/pages/sobre">Sobre nós</a></li>
+        <li><a href="/pages/contato">Contato</a></li>
+        <li><a href="/pages/faq">FAQ</a></li>
+        <li><a href="/blogs/news">Blog</a></li>
+      </ul>
+    </nav>
+
+    <!-- Nav 2 -->
+    <nav class="footer-nav">
+      <p class="footer-nav__title">{{ section.settings.nav2_title | default: 'Coleções' }}</p>
+      <ul>
+        <li><a href="/collections/cachorros">Cachorros</a></li>
+        <li><a href="/collections/gatos">Gatos</a></li>
+        <li><a href="/collections/coleiras">Coleiras</a></li>
+        <li><a href="/collections/pingentes">Pingentes</a></li>
+        <li><a href="/collections/bolsas">Bolsas</a></li>
+      </ul>
+    </nav>
+
+    <!-- Nav 3 -->
+    <nav class="footer-nav">
+      <p class="footer-nav__title">{{ section.settings.nav3_title | default: 'Atendimento' }}</p>
+      <ul>
+        <li><a href="https://wa.me/5548999999999">WhatsApp</a></li>
+        <li><a href="/pages/politica-de-troca">Troca & Devolução</a></li>
+        <li><a href="/pages/politica-de-privacidade">Privacidade</a></li>
+        <li><a href="/pages/termos">Termos de uso</a></li>
+      </ul>
+    </nav>
+
+  </div>
+
+  <div class="site-footer__bottom">
+    <span>© {{ 'now' | date: '%Y' }} {{ shop.name }}. Todos os direitos reservados.</span>
+    <span>CNPJ: {{ section.settings.cnpj | default: '00.000.000/0001-00' }}</span>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Rodapé",
+  "settings": [
+    { "type": "textarea", "id": "tagline",    "label": "Descrição da marca" },
+    { "type": "text",     "id": "nav1_title", "label": "Título coluna 1", "default": "Institucional" },
+    { "type": "text",     "id": "nav2_title", "label": "Título coluna 2", "default": "Coleções" },
+    { "type": "text",     "id": "nav3_title", "label": "Título coluna 3", "default": "Atendimento" },
+    { "type": "text",     "id": "cnpj",       "label": "CNPJ" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,33 @@
+{%- comment -%}
+  Snippet: pendant-images-json
+  Emite um <script type="application/json"> com as imagens dos pingentes
+  cadastradas via metaobjects.
+
+  ESTRUTURA DO METAOBJECT "pendant_image":
+  Campos: shape (single_line_text), material (single_line_text),
+          metal (single_line_text) — só para "metal" e "metal-couro",
+          segunda_cor (single_line_text) — só para "couro" e "metal-couro",
+          image_url (url)
+
+  Exemplos de entradas:
+    metal:       { shape, material: "metal",      metal: "ouro",    image_url }
+    couro:       { shape, material: "couro",      segunda_cor: "off-white", image_url }
+    metal-couro: { shape, material: "metal-couro", metal: "ouro", segunda_cor: "off-white", image_url }
+{%- endcomment -%}
+
+<script id="pendant-images-json" type="application/json">
+[
+  {%- assign pendant_entries = shop.metaobjects.pendant_image.values -%}
+  {%- if pendant_entries.size > 0 -%}
+    {%- for entry in pendant_entries -%}
+      {
+        "shape":       {{ entry.shape | json }},
+        "material":    {{ entry.material | json }},
+        "metal":       {{ entry.metal | default: '' | json }},
+        "segunda_cor": {{ entry.segunda_cor | default: '' | json }},
+        "image_url":   {{ entry.image_url | json }}
+      }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  {%- endif -%}
+]
+</script>

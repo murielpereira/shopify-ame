@@ -1,0 +1,25 @@
+{%- comment -%}
+  Snippet: cfg-pendant-shapes
+  Param: id_suffix ('' ou '-opt')
+{%- endcomment -%}
+
+{%- assign sfx = id_suffix | default: '' -%}
+
+<div class="cfg-shapes" id="shapes{{ sfx }}" role="group" aria-label="Formato do pingente">
+  {%- assign shapes = 'osso,coracao,flor,circulo' | split: ',' -%}
+  {%- assign emojis = '🦴,❤️,🌸,⭕' | split: ',' -%}
+  {%- assign labels = 'Ossinho,Coração,Flor,Redondo' | split: ',' -%}
+  {%- for shape in shapes -%}
+    <button
+      type="button"
+      class="shape-btn"
+      data-shape="{{ shape }}"
+      data-suffix="{{ sfx }}"
+      aria-pressed="false"
+      aria-label="{{ labels[forloop.index0] }}"
+    >
+      <span class="shape-btn__emoji" aria-hidden="true">{{ emojis[forloop.index0] }}</span>
+      <span class="shape-btn__label">{{ labels[forloop.index0] }}</span>
+    </button>
+  {%- endfor -%}
+</div>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f0eb">
+  <title>
+    {%- if template == 'index' -%}
+      {{ shop.name }} — Acessórios Pet em Couro Legítimo
+    {%- elsif template == 'product' -%}
+      {{ product.title }} — {{ shop.name }}
+    {%- elsif template == 'collection' -%}
+      {{ collection.title }} — {{ shop.name }}
+    {%- else -%}
+      {{ page_title }} — {{ shop.name }}
+    {%- endif -%}
+  </title>
+
+  {%- if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+
+  <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  {{ content_for_header }}
+
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+  {%- if template == 'product' -%}
+    {{ 'product-configurator.css' | asset_url | stylesheet_tag }}
+    {{ 'size-guide.css' | asset_url | stylesheet_tag }}
+  {%- endif -%}
+</head>
+
+<body class="template-{{ template | split: '.' | first }}">
+
+  {%- sections 'header-group' -%}
+
+  <main id="MainContent" role="main">
+    {{ content_for_layout }}
+  </main>
+
+  {%- sections 'footer-group' -%}
+
+  {{ 'theme.js' | asset_url | script_tag }}
+  {%- if template == 'product' -%}
+    <script src="{{ 'product-configurator.js' | asset_url }}" defer></script>
+    <script src="{{ 'size-guide.js' | asset_url }}" defer></script>
+  {%- endif -%}
+</body>
+</html>

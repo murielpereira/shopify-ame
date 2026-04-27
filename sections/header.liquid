@@ -1,0 +1,151 @@
+<!-- Announcement Bar -->
+<div class="announcement-bar">
+  <div class="announcement-bar__inner">
+    <span>✦ Frete grátis acima de R$299</span>
+    <span>✦ Parcele em até 6x sem juros</span>
+    <span>✦ Couro legítimo — feito à mão</span>
+    <span>✦ Troca fácil em 7 dias</span>
+    <span>✦ Frete grátis acima de R$299</span>
+    <span>✦ Parcele em até 6x sem juros</span>
+    <span>✦ Couro legítimo — feito à mão</span>
+    <span>✦ Troca fácil em 7 dias</span>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="site-header" role="banner">
+  <div class="site-header__inner">
+
+    <!-- Left Nav -->
+    <nav class="site-header__nav" aria-label="Navegação principal esquerda">
+      <a href="/collections/cachorros">Cachorros</a>
+      <a href="/collections/gatos">Gatos</a>
+      <a href="/collections/coleiras">Coleiras</a>
+    </nav>
+
+    <!-- Logo -->
+    <div class="site-header__logo">
+      <a href="/">
+        {%- if section.settings.logo != blank -%}
+          <img src="{{ section.settings.logo | image_url: width: 200 }}" alt="{{ shop.name }}" width="120">
+        {%- else -%}
+          Âme
+        {%- endif -%}
+      </a>
+    </div>
+
+    <!-- Right Actions -->
+    <div class="site-header__actions">
+      <a href="/collections/pingentes">Pingentes</a>
+      <a href="/pages/sobre">Sobre</a>
+      <button data-cart-toggle aria-label="Abrir sacola">
+        🛍 <span class="cart-count">{{ cart.item_count }}</span>
+      </button>
+    </div>
+
+  </div>
+</header>
+
+<!-- Cart Drawer -->
+<div class="cart-drawer-overlay" aria-hidden="true"></div>
+<div class="cart-drawer" role="dialog" aria-label="Sacola de compras" aria-modal="true">
+  <div class="cart-drawer__header">
+    <h2 class="cart-drawer__title">Sacola</h2>
+    <button class="cart-drawer__close" data-cart-close aria-label="Fechar sacola">✕</button>
+  </div>
+
+  <!-- Free shipping bar -->
+  <div class="cart-drawer__progress">
+    {%- assign free_shipping = 299 -%}
+    {%- assign cart_total = cart.total_price | divided_by: 100.0 -%}
+    {%- assign remaining = free_shipping | minus: cart_total -%}
+    {%- assign progress = cart_total | divided_by: free_shipping | times: 100 -%}
+    <div class="progress-bar">
+      <div class="progress-bar__fill" style="width: {{ progress | at_most: 100 }}%"></div>
+    </div>
+    <p class="progress-bar__label">
+      {%- if remaining > 0 -%}
+        Faltam R${{ remaining | money_without_currency }} para frete grátis!
+      {%- else -%}
+        🎉 Você ganhou frete grátis!
+      {%- endif -%}
+    </p>
+  </div>
+
+  <!-- Items -->
+  <div class="cart-drawer__items">
+    {%- if cart.item_count == 0 -%}
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:2rem;">
+        <p style="font-family:var(--font-heading);font-size:1.25rem;margin-bottom:0.5rem;">Sua sacola está vazia</p>
+        <p style="font-family:var(--font-body);font-size:0.875rem;color:var(--color-muted-fg);">Explore nossa coleção</p>
+      </div>
+    {%- else -%}
+      {%- for item in cart.items -%}
+        <div class="cart-item">
+          <img class="cart-item__image" src="{{ item.image | image_url: width: 160 }}" alt="{{ item.title }}">
+          <div class="cart-item__details">
+            <div class="cart-item__name">{{ item.product.title }}</div>
+            {%- if item.variant.title != 'Default Title' -%}
+              <div class="cart-item__properties">{{ item.variant.title }}</div>
+            {%- endif -%}
+            {%- for prop in item.properties -%}
+              {%- unless prop.last == blank or prop.first contains '_' -%}
+                <div class="cart-item__properties">↳ {{ prop.first }}: {{ prop.last }}</div>
+              {%- endunless -%}
+            {%- endfor -%}
+            <div class="cart-item__qty">
+              <form action="/cart/change" method="post">
+                <input type="hidden" name="id" value="{{ item.variant_id }}">
+                <input type="hidden" name="quantity" value="{{ item.quantity | minus: 1 }}">
+                <button type="submit" class="qty-btn">−</button>
+              </form>
+              <span style="font-family:var(--font-body);font-size:0.875rem;width:1.5rem;text-align:center;">{{ item.quantity }}</span>
+              <form action="/cart/change" method="post">
+                <input type="hidden" name="id" value="{{ item.variant_id }}">
+                <input type="hidden" name="quantity" value="{{ item.quantity | plus: 1 }}">
+                <button type="submit" class="qty-btn">+</button>
+              </form>
+            </div>
+          </div>
+          <div class="cart-item__price">R${{ item.line_price | money_without_currency }}</div>
+        </div>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+
+  <!-- Footer -->
+  {%- if cart.item_count > 0 -%}
+    <div class="cart-drawer__footer">
+      <!-- Coupon -->
+      <div class="coupon-field">
+        <input type="text" placeholder="Código do cupom" data-coupon-input>
+        <button type="button" data-coupon-apply>Aplicar</button>
+      </div>
+      <p data-coupon-message style="font-family:var(--font-body);font-size:0.7rem;margin-bottom:0.75rem;min-height:1rem;"></p>
+
+      <div class="cart-subtotal">
+        <span class="cart-subtotal__label">Subtotal</span>
+        <span class="cart-subtotal__value">R${{ cart.total_price | money_without_currency }}</span>
+      </div>
+      <p style="font-family:var(--font-body);font-size:0.7rem;color:var(--color-muted-fg);text-align:center;margin-bottom:1rem;">
+        Até 6x de R${{ cart.total_price | divided_by: 600.0 | round: 2 }} sem juros
+      </p>
+      <a href="/checkout" class="btn btn--dark" style="display:flex;width:100%;justify-content:center;border-radius:var(--radius);">
+        Finalizar Compra
+      </a>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Cabeçalho",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    }
+  ]
+}
+{% endschema %}

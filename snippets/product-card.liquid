@@ -1,0 +1,67 @@
+{%- assign compare = product.compare_at_price -%}
+{%- assign current = product.price -%}
+{%- assign discount = compare | minus: current | times: 100 | divided_by: compare -%}
+
+<div class="product-card">
+  <div class="product-card__media">
+    <a href="{{ product.url }}">
+      {%- if product.featured_image -%}
+        <img
+          src="{{ product.featured_image | image_url: width: 600 }}"
+          alt="{{ product.title }}"
+          loading="lazy"
+        >
+      {%- endif -%}
+    </a>
+
+    <!-- Badges -->
+    <div class="product-card__badges">
+      {%- if product.tags contains 'new' or product.tags contains 'novo' -%}
+        <span class="badge badge--new">Novo</span>
+      {%- endif -%}
+      {%- if compare > current -%}
+        <span class="badge badge--sale">-{{ discount }}%</span>
+      {%- endif -%}
+      {%- if product.tags contains 'cashback' -%}
+        <span class="badge badge--cashback">10% cashback</span>
+      {%- endif -%}
+    </div>
+
+    <!-- Wishlist -->
+    <button class="product-card__wishlist" aria-label="Adicionar à lista de desejos">♡</button>
+
+    <!-- Quick Add -->
+    {%- if product.variants.size == 1 -%}
+      <button
+        class="product-card__quick-add"
+        data-product-id="{{ product.id }}"
+        data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+      >
+        🛍 Adicionar
+      </button>
+    {%- else -%}
+      <a href="{{ product.url }}" class="product-card__quick-add">Ver opções</a>
+    {%- endif -%}
+  </div>
+
+  <a href="{{ product.url }}">
+    <!-- Stars -->
+    {%- assign rating = product.metafields.reviews.rating.value.rating | default: 5 -%}
+    <div class="product-card__stars">
+      {%- for i in (1..5) -%}★{%- endfor -%}
+    </div>
+
+    <h3 class="product-card__title">{{ product.title }}</h3>
+
+    <div class="product-card__price">
+      {%- if compare > current -%}
+        <span class="product-card__price-compare">R${{ compare | money_without_currency }}</span>
+      {%- endif -%}
+      <span class="product-card__price-current">R${{ current | money_without_currency }}</span>
+    </div>
+
+    <p class="product-card__installments">
+      até 6x de R${{ current | divided_by: 600.0 | round: 2 }} sem juros
+    </p>
+  </a>
+</div>

@@ -1,0 +1,74 @@
+{
+  "sections": {
+    "header": {
+      "type": "header",
+      "settings": {}
+    },
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "eyebrow": "Couro legítimo · Feito à mão",
+        "heading": "Para quem ama de verdade",
+        "subheading": "Coleiras, pingentes e bolsas artesanais que contam a história do seu pet.",
+        "button_label": "Explorar coleção",
+        "button_link": "/collections/all"
+      }
+    },
+    "trust_bar": {
+      "type": "trust-bar",
+      "settings": {
+        "icon_1": "🚚", "label_1": "Frete grátis acima de R$299",
+        "icon_2": "💳", "label_2": "6x sem juros",
+        "icon_3": "🛡", "label_3": "Garantia de 6 meses",
+        "icon_4": "↩", "label_4": "Troca fácil em 7 dias"
+      }
+    },
+    "bestsellers": {
+      "type": "product-grid",
+      "settings": {
+        "eyebrow": "Favoritos dos clientes",
+        "title": "Mais Vendidos",
+        "products_to_show": 4,
+        "button_label": "Ver todos",
+        "button_link": "/collections/all"
+      }
+    },
+    "category_banners": {
+      "type": "category-banners",
+      "block_order": ["banner_dogs", "banner_cats"],
+      "blocks": {
+        "banner_dogs": {
+          "type": "banner",
+          "settings": {
+            "title": "Para cachorros",
+            "link_text": "Explorar",
+            "link": "/collections/cachorros"
+          }
+        },
+        "banner_cats": {
+          "type": "banner",
+          "settings": {
+            "title": "Para gatos",
+            "link_text": "Explorar",
+            "link": "/collections/gatos"
+          }
+        }
+      }
+    },
+    "new_arrivals": {
+      "type": "product-grid",
+      "settings": {
+        "eyebrow": "Novidades da coleção",
+        "title": "Lançamentos",
+        "products_to_show": 4,
+        "button_label": "Explorar novidades",
+        "button_link": "/collections/lancamentos"
+      }
+    },
+    "footer": {
+      "type": "footer",
+      "settings": {}
+    }
+  },
+  "order": ["header", "hero", "trust_bar", "bestsellers", "category_banners", "new_arrivals", "footer"]
+}

@@ -1,0 +1,632 @@
+{%- comment -%}
+  ╔══════════════════════════════════════════════════════╗
+  ║  Âme — Product Template (Configurador Unificado)    ║
+  ║                                                      ║
+  ║  TIPOS via metafield product.metafields.ame.tipo:    ║
+  ║  • sem_pingente      → Tipo A (Coleira simples)      ║
+  ║  • pingente_incluso  → Tipo B (Pingente incluído)    ║
+  ║  • pingente_opcional → Tipo C (Pingente opcional)    ║
+  ╚══════════════════════════════════════════════════════╝
+{%- endcomment -%}
+
+{%- liquid
+  assign tipo = product.metafields.ame.tipo | default: product.metafields.custom.tipo | default: 'sem_pingente'
+  assign is_A = false
+  assign is_B = false
+  assign is_C = false
+  if tipo == 'sem_pingente'
+    assign is_A = true
+  elsif tipo == 'pingente_incluso'
+    assign is_B = true
+  elsif tipo == 'pingente_opcional'
+    assign is_C = true
+  endif
+
+  assign current_variant = product.selected_or_first_available_variant
+  assign pendant_price_cents = product.metafields.ame.preco_pingente | default: 0 | times: 1
+
+  assign segunda_cor = product.metafields.custom.segunda_cor_do_pingente | default: ''
+-%}
+
+<div class="product-page" data-tipo="{{ tipo }}">
+  <div class="product-page__grid">
+
+    <!-- ════════════ GALERIA ════════════ -->
+    <div class="product-page__gallery">
+
+      <!-- Miniaturas verticais (somente imagens — vídeos ficam nos stories) -->
+      {%- assign gallery_images = product.media | where: 'media_type', 'image' -%}
+      {%- if gallery_images.size > 1 -%}
+        <div class="gallery__thumbs" id="gallery-thumbs">
+          {%- for media in gallery_images -%}
+            <button
+              type="button"
+              class="gallery__thumb{% if forloop.first %} active{% endif %}"
+              data-media-type="image"
+              data-media-index="{{ forloop.index0 }}"
+              data-src="{{ media | image_url: width: 1200 }}"
+              data-alt="{{ media.alt | default: product.title | downcase }}"
+              aria-label="Ver foto {{ forloop.index }}"
+            >
+              <img
+                src="{{ media | image_url: width: 120 }}"
+                alt="{{ media.alt | default: product.title }}"
+                loading="lazy"
+                width="120" height="120"
+              >
+            </button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      <!-- Área principal de mídia -->
+      <div class="gallery__main-wrap" style="position:relative; overflow:hidden;">
+        <div class="gallery__skeleton" id="img-skeleton" aria-hidden="true"></div>
+
+        <!-- Imagem principal (foto / fallback) -->
+        <img
+          id="product-main-image"
+          src="{{ product.featured_image | image_url: width: 1200 }}"
+          alt="{{ product.title }}"
+          loading="eager"
+          fetchpriority="high"
+          width="1200"
+          height="1200"
+          style="transition: opacity 0.15s ease;"
+        >
+
+        <!-- Player de vídeo nativo (oculto até selecionar vídeo) -->
+        <video
+          id="product-main-video"
+          controls
+          playsinline
+          preload="metadata"
+          hidden
+          style="width:100%; height:100%; object-fit:cover; border-radius:inherit;"
+        ></video>
+
+        <!-- Player de vídeo externo (YouTube / Vimeo) -->
+        <div id="product-main-embed" hidden style="position:relative; width:100%; padding-bottom:100%;">
+          <iframe
+            id="product-main-iframe"
+            src=""
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+            allowfullscreen
+            style="position:absolute; inset:0; width:100%; height:100%; border-radius:inherit;"
+          ></iframe>
+        </div>
+
+        <!-- Overlay do pingente (PNG transparente sobre a foto da coleira) -->
+        <img
+          id="pendant-overlay"
+          src=""
+          alt="Pingente"
+          aria-hidden="true"
+          hidden
+          style="position:absolute; bottom:8%; left:50%; transform:translateX(-50%); width:22%; max-width:120px; pointer-events:none; transition:opacity 0.2s; opacity:0; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.25));"
+        >
+      </div>
+
+      <!-- Dados das mídias (só imagens) para o JS de galeria -->
+      <script id="product-media-json" type="application/json">
+      [
+        {%- for media in gallery_images -%}
+        {
+          "id": {{ media.id | json }},
+          "type": {{ media.media_type | json }},
+          "alt": {{ media.alt | default: '' | json }},
+          "src": {{ media.preview_image | image_url: width: 1200 | json }},
+          "thumb": {{ media.preview_image | image_url: width: 120 | json }}
+          {%- if media.media_type == 'video' -%}
+          ,"sources": [
+            {%- for source in media.sources -%}
+            {"url": {{ source.url | json }}, "mime": {{ source.mime_type | json }}}{% unless forloop.last %},{% endunless %}
+            {%- endfor -%}
+          ]
+          {%- elsif media.media_type == 'external_video' -%}
+          ,"host": {{ media.host | json }},
+          "external_id": {{ media.external_id | json }}
+          {%- endif -%}
+        }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+      </script>
+
+    </div>
+
+    <!-- ════════════ DETALHES + CONFIGURADOR ════════════ -->
+    <div class="product-page__details">
+
+      <!-- Avaliações -->
+      {%- if product.metafields.reviews.rating.value != blank -%}
+        <div class="cfg-stars">
+          <span class="cfg-stars__icons" aria-label="{{ product.metafields.reviews.rating.value }} de 5 estrelas">
+            {%- assign rating = product.metafields.reviews.rating.value | round -%}
+            {%- for i in (1..5) -%}
+              <span class="cfg-star{% if i <= rating %} cfg-star--on{% endif %}" aria-hidden="true">★</span>
+            {%- endfor -%}
+          </span>
+          <span class="cfg-stars__count">({{ product.metafields.reviews.rating_count | default: 0 }} avaliações)</span>
+        </div>
+      {%- endif -%}
+
+      <h1 class="product-page__title">{{ product.title }}</h1>
+
+      <!-- Preço -->
+      <div class="cfg-price-wrap">
+        {%- if current_variant.compare_at_price > current_variant.price -%}
+          <s class="cfg-price__compare">{{ current_variant.compare_at_price | money }}</s>
+        {%- endif -%}
+        <div class="cfg-price__current" id="js-price">{{ current_variant.price | money }}</div>
+        <p class="cfg-price__installments" id="js-installments">
+          até 6x de {{ current_variant.price | divided_by: 6 | money }} sem juros
+        </p>
+      </div>
+
+      <p class="product-page__description">{{ product.description }}</p>
+
+      <!-- ════ STORIES DE VÍDEO ════ -->
+      {%- assign product_videos = product.media | where: 'media_type', 'video' -%}
+      {%- if product_videos.size > 0 -%}
+        <section class="product-stories" aria-label="Vídeos do produto">
+          <div class="product-stories__list">
+            {%- for video in product_videos -%}
+              <button type="button"
+                      class="product-stories__circle"
+                      data-story-index="{{ forloop.index0 }}"
+                      aria-label="Assistir vídeo {{ forloop.index }}">
+                <span class="product-stories__circle-inner">
+                  <img src="{{ video.preview_image | image_url: width: 200, height: 200, crop: 'center' }}"
+                       alt=""
+                       loading="lazy">
+                </span>
+              </button>
+            {%- endfor -%}
+          </div>
+        </section>
+
+        <script type="application/json" id="product-stories-data">
+        [
+          {%- for video in product_videos -%}
+            {
+              "preview": {{ video.preview_image | image_url: width: 800 | json }},
+              "sources": [
+                {%- for source in video.sources -%}
+                  {"url": {{ source.url | json }}, "type": {{ source.mime_type | json }}}
+                  {%- unless forloop.last -%},{%- endunless -%}
+                {%- endfor -%}
+              ]
+            }{%- unless forloop.last -%},{%- endunless -%}
+          {%- endfor -%}
+        ]
+        </script>
+      {%- endif -%}
+
+      <!-- ════ FORM ════ -->
+      <form id="cfg-form" novalidate>
+        <input type="hidden" id="cfg-variant-id" name="id" value="{{ current_variant.id }}">
+
+        <!-- ─── ETAPA 1: COR DA PEÇA ─── -->
+        <div class="cfg-step" id="step-cor">
+          <p class="cfg-step__label" id="label-cor">
+            Outras opções: <span id="chosen-cor">{{ current_variant.option1 }}</span>
+          </p>
+
+          {%- comment -%}
+            Swatches = fotos miniaturas das variantes.
+            Agrupamos variantes únicas por option1 (Cor).
+            A imagem swatch vem do primeiro produto com aquela cor.
+          {%- endcomment -%}
+          <div class="cfg-swatches" id="swatches-cor" role="group" aria-label="Cor da peça">
+            {%- assign seen_colors = '' -%}
+            {%- for variant in product.variants -%}
+              {%- unless seen_colors contains variant.option1 -%}
+                {%- assign seen_colors = seen_colors | append: variant.option1 | append: '|' -%}
+                {%- assign swatch_img = variant.image | default: product.featured_image -%}
+                <button
+                  type="button"
+                  class="swatch-photo{% if variant.option1 == current_variant.option1 %} active{% endif %}"
+                  data-color="{{ variant.option1 }}"
+                  data-variant-id="{{ variant.id }}"
+                  data-img-src="{{ swatch_img | image_url: width: 1200 }}"
+                  data-img-thumb="{{ swatch_img | image_url: width: 120 }}"
+                  aria-label="{{ variant.option1 }}"
+                  aria-pressed="{{ variant.option1 == current_variant.option1 }}"
+                  title="{{ variant.option1 }}"
+                >
+                  <img
+                    src="{{ swatch_img | image_url: width: 120 }}"
+                    alt="{{ variant.option1 }}"
+                    loading="lazy"
+                    width="60" height="60"
+                  >
+                </button>
+              {%- endunless -%}
+            {%- endfor -%}
+          </div>
+        </div>
+
+        <!-- ─── ETAPA 2: TAMANHO (só aparece se o produto tiver opção Tamanho) ─── -->
+        {%- assign has_size_option = false -%}
+        {%- for opt in product.options_with_values -%}
+          {%- if opt.name == 'Tamanho' or opt.name == 'Size' -%}
+            {%- assign has_size_option = true -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- if has_size_option -%}
+          <!-- Quiz só aparece se há tamanhos -->
+          {%- render 'size-guide' -%}
+
+          <div class="cfg-step" id="step-tamanho">
+            <p class="cfg-step__label">
+              Tamanho: <span id="chosen-tamanho">—</span>
+              <button type="button" class="sz-link-medidas" id="sz-link-medidas">📏 Ver Tabela de Medidas</button>
+            </p>
+            <p class="sz-override-note" id="sz-override-note"></p>
+            <div class="cfg-sizes" role="group" aria-label="Tamanho">
+              {%- for opt in product.options_with_values -%}
+                {%- if opt.name == 'Tamanho' or opt.name == 'Size' -%}
+                  {%- for val in opt.values -%}
+                    <button
+                      type="button"
+                      class="size-btn"
+                      data-value="{{ val }}"
+                      aria-pressed="false"
+                    >{{ val }}</button>
+                  {%- endfor -%}
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        <!-- ─── ETAPA 3: COR DO METAL ─── -->
+        <div class="cfg-step" id="step-metal">
+          <p class="cfg-step__label">
+            Cor do Metal: <span id="chosen-metal">—</span>
+          </p>
+          <div class="cfg-metals" id="metals-container" role="group" aria-label="Cor do metal"></div>
+        </div>
+
+        <!-- ══════════ TIPO B — Pingente Incluso ══════════ -->
+        {%- if is_B -%}
+          <!-- ─── ETAPA 4: MODELO DO PINGENTE ─── -->
+          <div class="cfg-step" id="step-modelo">
+            <p class="cfg-step__label">
+              Modelo do Pingente: <span id="chosen-modelo">—</span>
+              <span class="badge-incluso">✦ Incluso no preço</span>
+            </p>
+            <div class="cfg-modelos" role="group" aria-label="Modelo do pingente">
+              <button type="button" class="modelo-btn" data-modelo="metal" data-suffix="" aria-pressed="false">
+                <span class="modelo-btn__icon">⚙️</span>
+                <span class="modelo-btn__label">Metal</span>
+                <span class="modelo-btn__price">+R$ 60,00</span>
+              </button>
+              <button type="button" class="modelo-btn" data-modelo="couro" data-suffix="" aria-pressed="false">
+                <span class="modelo-btn__icon">🟤</span>
+                <span class="modelo-btn__label">Couro</span>
+                <span class="modelo-btn__price">+R$ 80,00</span>
+              </button>
+              <button type="button" class="modelo-btn" data-modelo="metal-couro" data-suffix="" aria-pressed="false">
+                <span class="modelo-btn__icon">✨</span>
+                <span class="modelo-btn__label">Metal + Couro</span>
+                <span class="modelo-btn__price">+R$ 70,00</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- ─── AVISO DE DISPONIBILIDADE ─── -->
+          <div id="pingente-warning" class="cfg-warning" hidden></div>
+
+          <!-- ─── ETAPA 5: FORMATO DO PINGENTE ─── -->
+          <div class="cfg-step" id="step-formato">
+            <p class="cfg-step__label">
+              Formato do Pingente: <span id="chosen-formato">—</span>
+              <span class="badge-incluso">✦ Incluso no preço</span>
+            </p>
+            <div class="cfg-shapes" role="group" aria-label="Formato do pingente">
+              {%- assign shapes = 'circulo,coracao,flor,osso' | split: ',' -%}
+              {%- assign shape_labels = 'Círculo,Coração,Flor,Osso' | split: ',' -%}
+              {%- assign shape_emojis = '⭕,❤️,🌸,🦴' | split: ',' -%}
+              {%- for s in shapes -%}
+                <button type="button" class="shape-btn" data-shape="{{ s }}" aria-pressed="false">
+                  <span class="shape-btn__emoji" aria-hidden="true">{{ shape_emojis[forloop.index0] }}</span>
+                  <span class="shape-btn__label">{{ shape_labels[forloop.index0] }}</span>
+                </button>
+              {%- endfor -%}
+            </div>
+          </div>
+
+          <!-- ─── ETAPA 5: DADOS DO PINGENTE ─── -->
+          <div class="cfg-step" id="step-dados-pingente">
+            <button type="button" class="btn-toggle-dados" id="btn-toggle-dados" aria-expanded="false">
+              <span class="btn-toggle-dados__icon" aria-hidden="true">✎</span>
+              Coloque aqui os dados do pingente
+              <span class="btn-toggle-dados__arrow" aria-hidden="true">▾</span>
+            </button>
+
+            <div class="cfg-dados-wrap" id="dados-wrap" hidden>
+              {%- render 'cfg-pendant-fields', suffix: '' -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        <!-- ══════════ TIPO C — Pingente Opcional ══════════ -->
+        {%- if is_C -%}
+          <div class="cfg-step cfg-step--divider" id="step-quer-pingente">
+            <p class="cfg-step__label cfg-step__label--section">
+              Deseja incluir um pingente de identificação?
+            </p>
+
+            <div class="pendant-choice-grid" role="group" aria-label="Incluir pingente?">
+              <!-- COM pingente -->
+              <button type="button" class="pendant-choice-card" data-choice="com" aria-pressed="false" id="card-com-pingente">
+                <div class="pendant-choice-card__img-wrap">
+                  <img
+                    id="preview-com-pingente"
+                    src="{{ product.featured_image | image_url: width: 400 }}"
+                    alt="Com pingente"
+                    loading="lazy"
+                    width="400" height="400"
+                  >
+                </div>
+                <span class="pendant-choice-card__name">Com Pingente</span>
+                <span class="pendant-choice-card__price" id="price-com-pingente" style="display:none"></span>
+              </button>
+
+              <!-- SEM pingente -->
+              <button type="button" class="pendant-choice-card active" data-choice="sem" aria-pressed="true" id="card-sem-pingente">
+                <div class="pendant-choice-card__img-wrap">
+                  <img
+                    id="preview-sem-pingente"
+                    src="{{ product.featured_image | image_url: width: 400 }}"
+                    alt="Sem pingente"
+                    loading="lazy"
+                    width="400" height="400"
+                  >
+                </div>
+                <span class="pendant-choice-card__name">Sem Pingente</span>
+                <span class="pendant-choice-card__price">Incluído no preço</span>
+              </button>
+            </div>
+
+            <!-- Sub-etapas (reveladas ao escolher "com") -->
+            <div id="sub-pendant-steps" hidden>
+              <!-- ─── MODELO (Tipo C) ─── -->
+              <div class="cfg-step" id="step-modelo-c">
+                <p class="cfg-step__label">Modelo do Pingente: <span id="chosen-modelo-c">—</span></p>
+                <div class="cfg-modelos" role="group" aria-label="Modelo do pingente">
+                  <button type="button" class="modelo-btn" data-modelo="metal" data-suffix="-c" aria-pressed="false">
+                    <span class="modelo-btn__icon">⚙️</span>
+                    <span class="modelo-btn__label">Metal</span>
+                    <span class="modelo-btn__price">+R$&nbsp;60,00</span>
+                  </button>
+                  <button type="button" class="modelo-btn" data-modelo="couro" data-suffix="-c" aria-pressed="false">
+                    <span class="modelo-btn__icon">🟤</span>
+                    <span class="modelo-btn__label">Couro</span>
+                    <span class="modelo-btn__price">+R$&nbsp;80,00</span>
+                  </button>
+                  <button type="button" class="modelo-btn" data-modelo="metal-couro" data-suffix="-c" aria-pressed="false">
+                    <span class="modelo-btn__icon">✨</span>
+                    <span class="modelo-btn__label">Metal + Couro</span>
+                    <span class="modelo-btn__price">+R$&nbsp;70,00</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="cfg-step" id="step-formato-c">
+                <p class="cfg-step__label">
+                  Formato do Pingente: <span id="chosen-formato-c">—</span>
+                </p>
+                <div class="cfg-shapes" role="group" aria-label="Formato do pingente" id="shapes-c">
+                  {%- assign shapes = 'circulo,coracao,flor,osso' | split: ',' -%}
+                  {%- assign shape_labels = 'Círculo,Coração,Flor,Osso' | split: ',' -%}
+                  {%- assign shape_emojis = '⭕,❤️,🌸,🦴' | split: ',' -%}
+                  {%- for s in shapes -%}
+                    <button type="button" class="shape-btn" data-shape="{{ s }}" data-for="c" aria-pressed="false">
+                      <span class="shape-btn__emoji" aria-hidden="true">{{ shape_emojis[forloop.index0] }}</span>
+                      <span class="shape-btn__label">{{ shape_labels[forloop.index0] }}</span>
+                    </button>
+                  {%- endfor -%}
+                </div>
+              </div>
+
+              <div class="cfg-step" id="step-dados-c">
+                <button type="button" class="btn-toggle-dados" id="btn-toggle-dados-c" aria-expanded="false">
+                  <span class="btn-toggle-dados__icon" aria-hidden="true">✎</span>
+                  Coloque aqui os dados do pingente
+                  <span class="btn-toggle-dados__arrow" aria-hidden="true">▾</span>
+                </button>
+                <div class="cfg-dados-wrap" id="dados-wrap-c" hidden>
+                  {%- render 'cfg-pendant-fields', suffix: '-c' -%}
+                </div>
+              </div>
+            </div>
+
+          </div>
+        {%- endif -%}
+
+        <!-- ─── INFORMAÇÕES PARA A LOJA (todos os tipos) ─── -->
+        <div class="cfg-step cfg-step--last" id="step-info-loja">
+          <label for="cfg-info-loja" class="cfg-step__label">
+            Informações para a loja
+            <span class="optional-tag">(opcional)</span>
+          </label>
+          <textarea
+            id="cfg-info-loja"
+            name="properties[Informações para a loja]"
+            maxlength="100"
+            rows="3"
+            class="cfg-textarea"
+            placeholder="Qual a raça, idade e peso do pet? Usamos essa informação somente para auxiliar você na escolha correta do tamanho das peças."
+          ></textarea>
+          <span class="cfg-textarea__count"><span id="count-info">0</span>/100</span>
+        </div>
+
+        <!-- ─── BOTÃO COMPRAR ─── -->
+        <div class="cfg-actions">
+          <button type="submit" class="btn-buy" id="btn-buy" disabled>
+            <span id="btn-buy-text">Comprar</span>
+            <span id="btn-buy-loading" hidden>
+              <span class="btn-spinner" aria-hidden="true"></span>
+              Adicionando...
+            </span>
+          </button>
+          <button type="button" class="btn-wishlist" id="btn-wishlist" aria-label="Adicionar à lista de desejos">♡</button>
+        </div>
+        <p class="cfg-error" id="cfg-error" role="alert" hidden></p>
+        <p class="cfg-secure">🔒 Compra 100% segura · Troca em até 7 dias</p>
+
+      </form>
+
+      <!-- Trust -->
+      <div class="product-trust">
+        <div class="product-trust__item">🚚 <span>Frete grátis acima de R$299</span></div>
+        <div class="product-trust__item">🛡 <span>Garantia de 6 meses</span></div>
+        <div class="product-trust__item">↩ <span>Troca fácil</span></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── Story Viewer Modal ── -->
+<div class="story-viewer" id="story-viewer" hidden
+     role="dialog" aria-modal="true" aria-label="Vídeos do produto">
+  <button type="button" class="story-viewer__close" aria-label="Fechar vídeos">✕</button>
+  <div class="story-viewer__progress-bar" id="story-progress"></div>
+  <div class="story-viewer__stage">
+    <video class="story-viewer__video" id="story-video" playsinline preload="metadata"></video>
+  </div>
+  <button type="button" class="story-viewer__nav story-viewer__nav--prev" id="story-prev" aria-label="Vídeo anterior">‹</button>
+  <button type="button" class="story-viewer__nav story-viewer__nav--next" id="story-next" aria-label="Próximo vídeo">›</button>
+  <button type="button" class="story-viewer__tap-zone story-viewer__tap-zone--left"  id="story-tap-prev" aria-hidden="true"></button>
+  <button type="button" class="story-viewer__tap-zone story-viewer__tap-zone--right" id="story-tap-next" aria-hidden="true"></button>
+</div>
+
+<script src="{{ 'product-stories.js' | asset_url }}" defer></script>
+
+<!-- ── Imagens dos pingentes para a prévia da gravação ── -->
+{%- render 'pendant-images-json' -%}
+
+<!-- ── Mapa segunda_cor por variante ── -->
+<script id="variants-segunda-cor" type="application/json">
+{
+  {%- for variant in product.variants -%}
+  "{{ variant.id }}": {{ variant.metafields.custom.segunda_cor | default: '' | json }}
+  {%- unless forloop.last -%},{%- endunless -%}
+  {%- endfor -%}
+}
+</script>
+
+<!-- ── Produtos pingente por modelo ── -->
+{%- assign primeira_variante = product.variants.first -%}
+{%- assign sc = primeira_variante.metafields.custom.segunda_cor | default: '' -%}
+
+{%- assign handle_metal       = 'pingente-metal-pet-'       | append: sc -%}
+{%- assign handle_couro       = 'pingente-couro-pet-'       | append: sc -%}
+{%- assign handle_metal_couro = 'pingente-metal-couro-pet-' | append: sc -%}
+
+{%- assign prod_metal       = all_products[handle_metal]       -%}
+{%- assign prod_couro       = all_products[handle_couro]       -%}
+{%- assign prod_metal_couro = all_products[handle_metal_couro] -%}
+
+<!-- ── Dados para o JS ── -->
+<script id="product-json" type="application/json">
+{
+  "tipo": {{ tipo | json }},
+  "basePrice": {{ current_variant.price }},
+  "pendantPriceCents": {{ pendant_price_cents }},
+  "segundaCor": {{ segunda_cor | json }},
+  "variants": {{ product.variants | json }},
+  "allImages": [
+    {%- for image in product.images -%}
+      {
+        "src": {{ image | image_url: width: 1200 | json }},
+        "thumb": {{ image | image_url: width: 120 | json }},
+        "alt": {{ image.alt | default: '' | downcase | json }}
+      }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ],
+  "metals": [
+    {%- assign metal_opt = nil -%}
+    {%- for opt in product.options_with_values -%}
+      {%- if opt.name == 'Metal' or opt.name == 'Cor do Metal' or opt.name == 'metal' -%}
+        {%- assign metal_opt = opt -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if metal_opt -%}
+      {%- for val in metal_opt.values -%}
+        {
+          "label": {{ val | json }},
+          "slug": {{ val | downcase | remove: ' ' | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    {%- else -%}
+      {%- comment -%}Fallback: deduplica option3 das variantes{%- endcomment -%}
+      {%- assign metal_seen = '' -%}
+      {%- assign metal_arr = '' -%}
+      {%- for variant in product.variants -%}
+        {%- if variant.option3 != blank -%}
+          {%- unless metal_seen contains variant.option3 -%}
+            {%- assign metal_seen = metal_seen | append: variant.option3 | append: '||' -%}
+            {%- unless forloop.first -%}{%- assign metal_arr = metal_arr | append: ',' -%}{%- endunless -%}
+            {%- assign metal_arr = metal_arr | append: variant.option3 -%}
+          {%- endunless -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- assign metal_list = metal_seen | split: '||' -%}
+      {%- for m in metal_list -%}
+        {%- if m != blank -%}
+          {
+            "label": {{ m | json }},
+            "slug": {{ m | downcase | remove: ' ' | json }}
+          }{% unless forloop.last %},{% endunless %}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+  ],
+  "optionNames": [
+    {%- for opt in product.options -%}
+      {{ opt | json }}{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ],
+  "title": {{ product.title | json }},
+  "pingentePrices": {
+    "metal":       6000,
+    "couro":       8000,
+    "metal-couro": 7000
+  },
+  "pingenteProducts": {
+    "metal": {
+      "handle": {{ handle_metal | json }},
+      "available": {{ prod_metal.available | default: false | json }},
+      "variants": [
+        {%- for v in prod_metal.variants -%}
+        {"id":{{ v.id | json }},"metal":{{ v.option1 | json }},"tamanho":{{ v.option2 | json }},"formato":{{ v.option3 | json }},"price":{{ v.price | json }},"available":{{ v.available | json }}}{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+    },
+    "couro": {
+      "handle": {{ handle_couro | json }},
+      "available": {{ prod_couro.available | default: false | json }},
+      "variants": [
+        {%- for v in prod_couro.variants -%}
+        {"id":{{ v.id | json }},"metal":{{ v.option1 | json }},"tamanho":{{ v.option2 | json }},"formato":{{ v.option3 | json }},"price":{{ v.price | json }},"available":{{ v.available | json }}}{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+    },
+    "metal-couro": {
+      "handle": {{ handle_metal_couro | json }},
+      "available": {{ prod_metal_couro.available | default: false | json }},
+      "variants": [
+        {%- for v in prod_metal_couro.variants -%}
+        {"id":{{ v.id | json }},"metal":{{ v.option1 | json }},"tamanho":{{ v.option2 | json }},"formato":{{ v.option3 | json }},"price":{{ v.price | json }},"available":{{ v.available | json }}}{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+    }
+  }
+}
+</script>

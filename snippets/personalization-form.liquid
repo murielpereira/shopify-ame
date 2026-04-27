@@ -1,0 +1,58 @@
+{%- comment -%}
+  Snippet: personalization-form
+  Usage: {%- render 'personalization-form' -%}
+         {%- render 'personalization-form', suffix: '-opt' -%}
+  The suffix param differentiates IDs when used twice on the same page (tipo 4).
+{%- endcomment -%}
+
+{%- assign sfx = suffix | default: '' -%}
+
+<div class="personalization-form" id="personalization-form{{ sfx }}">
+  <div class="form-row">
+    <div class="form-field">
+      <label for="pet-name{{ sfx }}">
+        Nome do pet <span class="required">*</span>
+        <span class="char-counter" id="counter-pet{{ sfx }}">0/12</span>
+      </label>
+      <input
+        type="text"
+        id="pet-name{{ sfx }}"
+        name="properties[Nome do pet]"
+        placeholder="Ex: Luna"
+        maxlength="12"
+        autocomplete="off"
+        data-personalization="pet-name"
+      >
+      <span class="field-error" id="error-pet{{ sfx }}"></span>
+    </div>
+    <div class="form-field">
+      <label for="tutor-name{{ sfx }}">
+        Nome do tutor <span class="required">*</span>
+      </label>
+      <input
+        type="text"
+        id="tutor-name{{ sfx }}"
+        name="properties[Nome do tutor]"
+        placeholder="Ex: Maria"
+        maxlength="20"
+        autocomplete="name"
+        data-personalization="tutor-name"
+      >
+      <span class="field-error" id="error-tutor{{ sfx }}"></span>
+    </div>
+  </div>
+  <div class="form-field" style="margin-top:0.75rem;">
+    <label for="tutor-phone{{ sfx }}">
+      Telefone do tutor <span class="required">*</span>
+    </label>
+    <input
+      type="tel"
+      id="tutor-phone{{ sfx }}"
+      name="properties[Telefone do tutor]"
+      placeholder="(48) 99999-9999"
+      inputmode="numeric"
+      data-personalization="phone"
+    >
+    <span class="field-error" id="error-phone{{ sfx }}"></span>
+  </div>
+</div>

@@ -1,0 +1,353 @@
+{%- comment -%}
+  Snippet: size-guide
+  Contém: Modal da Tabela de Medidas + Quiz de Tamanho
+  Inclua no product.liquid com: {%- render 'size-guide' -%}
+{%- endcomment -%}
+
+<!-- ═══════════════════════════════════════════════
+     MODAL — TABELA DE MEDIDAS
+     ═══════════════════════════════════════════════ -->
+<div class="sz-modal" id="sz-modal" role="dialog" aria-modal="true" aria-label="Tabela de Medidas" hidden>
+  <div class="sz-modal__backdrop" id="sz-modal-backdrop"></div>
+  <div class="sz-modal__box">
+    <button type="button" class="sz-modal__close" id="sz-modal-close" aria-label="Fechar">✕</button>
+    <h3 class="sz-modal__title">Tabela de Medidas</h3>
+
+    <div class="sz-table-wrap">
+      <table class="sz-table">
+        <thead>
+          <tr>
+            <th>Tam.</th>
+            <th>Peso</th>
+            <th>Raças / Perfil</th>
+            <th>Largura</th>
+            <th>Pescoço (cm)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="sz-table__size">XPP</td>
+            <td>Até 2kg</td>
+            <td>Pets pequenos e micro</td>
+            <td>1 cm</td>
+            <td>19 – 23</td>
+          </tr>
+          <tr>
+            <td class="sz-table__size">XPP+</td>
+            <td>2kg a 3,5kg</td>
+            <td>Gatos, Chihuahua, Lulu Anão, Yorkshire, Maltês</td>
+            <td>1 cm</td>
+            <td>20 – 27,5</td>
+          </tr>
+          <tr>
+            <td class="sz-table__size">PP</td>
+            <td>2kg a 3,5kg</td>
+            <td>Mesmas do XPP+ porém mais larga</td>
+            <td>1,5 cm</td>
+            <td>20 – 27,5</td>
+          </tr>
+          <tr>
+            <td class="sz-table__size">P</td>
+            <td>4kg a 10kg</td>
+            <td>Dachshund, Shih Tzu, Jack Russell, Cavalier</td>
+            <td>1,5 cm</td>
+            <td>27 – 37</td>
+          </tr>
+          <tr>
+            <td class="sz-table__size">M</td>
+            <td>12kg a 22kg</td>
+            <td>Corgi, Border Collie, Cocker, Bulldog Francês</td>
+            <td>2 cm</td>
+            <td>33 – 45,5</td>
+          </tr>
+          <tr>
+            <td class="sz-table__size">G</td>
+            <td>Até 35kg</td>
+            <td>Pitbull, Dálmata, Bulldog Inglês, Golden Retriever</td>
+            <td>2,5 cm</td>
+            <td>45 – 60</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="sz-modal__hint">
+      Meça o pescoço do seu pet com uma fita métrica e deixe 2 dedos de folga. Em dúvida, use o quiz 🐾
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     QUIZ DE TAMANHO
+     ═══════════════════════════════════════════════ -->
+<div class="sz-quiz-wrap" id="sz-quiz-wrap">
+
+  <!-- Gatilho -->
+  <button type="button" class="sz-quiz-trigger" id="sz-quiz-trigger" aria-expanded="false">
+    <span class="sz-quiz-trigger__paw" aria-hidden="true">🐾</span>
+    <span id="sz-quiz-trigger-text">Vamos descobrir o tamanho ideal?</span>
+    <span class="sz-quiz-trigger__arrow" id="sz-quiz-arrow" aria-hidden="true">▾</span>
+  </button>
+
+  <!-- Quiz body -->
+  <div class="sz-quiz-body" id="sz-quiz-body" hidden>
+
+    <!-- Progresso -->
+    <div class="sz-quiz-progress" id="sz-quiz-progress">
+      <div class="sz-quiz-progress__bar" id="sz-quiz-progress-bar" style="width:0%"></div>
+    </div>
+
+    <!-- Q1: Raça -->
+    <div class="sz-quiz-step" id="sq-step-1">
+      <p class="sz-quiz-question">Qual a raça do seu pet?</p>
+      <div class="sz-quiz-options">
+        <button type="button" class="sz-opt" data-q="1" data-val="xpp-racas">Yorkshire / Maltês / Lulu Anão / Chihuahua</button>
+        <button type="button" class="sz-opt" data-q="1" data-val="pp-racas">Dachshund / Shih Tzu / Jack Russell / Cavalier</button>
+        <button type="button" class="sz-opt" data-q="1" data-val="m-racas">Corgi / Cocker / Border Collie / Bulldog Francês</button>
+        <button type="button" class="sz-opt" data-q="1" data-val="g-racas">Pitbull / Dálmata / Bulldog Inglês / Golden / Labrador</button>
+        <button type="button" class="sz-opt" data-q="1" data-val="gato">Gato</button>
+        <button type="button" class="sz-opt" data-q="1" data-val="outra">Outra raça — vou informar o peso</button>
+      </div>
+    </div>
+
+    <!-- Q2: Peso -->
+    <div class="sz-quiz-step" id="sq-step-2" hidden>
+      <p class="sz-quiz-question">Qual o peso aproximado?</p>
+      <div class="sz-quiz-options">
+        <button type="button" class="sz-opt" data-q="2" data-val="ate-2kg">Até 2kg</button>
+        <button type="button" class="sz-opt" data-q="2" data-val="2-3.5kg">2kg a 3,5kg</button>
+        <button type="button" class="sz-opt" data-q="2" data-val="4-10kg">4kg a 10kg</button>
+        <button type="button" class="sz-opt" data-q="2" data-val="12-22kg">12kg a 22kg</button>
+        <button type="button" class="sz-opt" data-q="2" data-val="acima-22kg">Acima de 22kg</button>
+      </div>
+    </div>
+
+    <!-- Q3: Adulto? -->
+    <div class="sz-quiz-step" id="sq-step-3" hidden>
+      <p class="sz-quiz-question">Seu pet já é adulto?</p>
+      <div class="sz-quiz-options">
+        <button type="button" class="sz-opt" data-q="3" data-val="adulto">Sim, já é adulto</button>
+        <button type="button" class="sz-opt" data-q="3" data-val="filhote">Ainda é filhote</button>
+      </div>
+    </div>
+
+    <!-- Q4: Filhote — quantos meses? (condicional) -->
+    <div class="sz-quiz-step" id="sq-step-4" hidden>
+      <p class="sz-quiz-question">Quantos meses tem?</p>
+      <div class="sz-quiz-options">
+        <button type="button" class="sz-opt" data-q="4" data-val="menos-3">Menos de 3 meses</button>
+        <button type="button" class="sz-opt" data-q="4" data-val="3-6">3 a 6 meses</button>
+        <button type="button" class="sz-opt" data-q="4" data-val="mais-6">Mais de 6 meses</button>
+      </div>
+    </div>
+
+    <!-- Resultado -->
+    <div class="sz-quiz-result" id="sz-quiz-result" hidden>
+      <div class="sz-result-card">
+        <span class="sz-result-card__check" aria-hidden="true">✓</span>
+        <div class="sz-result-card__body">
+          <p class="sz-result-card__label">Tamanho indicado:</p>
+          <p class="sz-result-card__size" id="sz-result-size">—</p>
+          <p class="sz-result-card__detail" id="sz-result-detail">—</p>
+          <p class="sz-result-card__note" id="sz-result-note"></p>
+        </div>
+      </div>
+      <button type="button" class="sz-result-confirm" id="sz-result-confirm">
+        Confirmar e usar este tamanho
+      </button>
+      <p class="sz-result-whatsapp">
+        Ficou com dúvida? Entre em contato pelo WhatsApp antes da produção 🐾
+      </p>
+      <button type="button" class="sz-quiz-restart" id="sz-quiz-restart">↩ Refazer quiz</button>
+    </div>
+
+  </div><!-- /.sz-quiz-body -->
+</div><!-- /.sz-quiz-wrap -->
+
+<script>
+(function () {
+  // ── Tabela de tamanhos ────────────────────────────────────────────────────
+  var SIZE_TABLE = [
+    { tam: 'XPP',  pescoco: '19 – 23 cm',   largura: '1 cm',   idx: 0 },
+    { tam: 'XPP+', pescoco: '20 – 27,5 cm', largura: '1 cm',   idx: 1 },
+    { tam: 'PP',   pescoco: '20 – 27,5 cm', largura: '1,5 cm', idx: 2 },
+    { tam: 'P',    pescoco: '27 – 37 cm',   largura: '1,5 cm', idx: 3 },
+    { tam: 'M',    pescoco: '33 – 45,5 cm', largura: '2 cm',   idx: 4 },
+    { tam: 'G',    pescoco: '45 – 60 cm',   largura: '2,5 cm', idx: 5 },
+  ];
+
+  function calcularTamanho(grupo, peso, adulto, meses) {
+    // Gato → sempre XPP+
+    if (grupo === 'gato') {
+      var r = SIZE_TABLE[1];
+      return { tam: r.tam, pescoco: r.pescoco, largura: r.largura, nota: 'Para gatos recomendamos o XPP+ 🐱' };
+    }
+
+    var pesoIdx = { 'ate-2kg': 0, '2-3.5kg': 1, '4-10kg': 3, '12-22kg': 4, 'acima-22kg': 5 };
+    var idx = pesoIdx[peso] !== undefined ? pesoIdx[peso] : 3;
+
+    // Ajustes por grupo de raça
+    if (grupo === 'xpp-racas') idx = Math.min(idx, 1);
+    if (grupo === 'pp-racas' && peso === '2-3.5kg') idx = 2;
+    if (grupo === 'm-racas') idx = Math.max(idx, 4);
+    if (grupo === 'g-racas') idx = Math.max(idx, 5);
+
+    // Filhote muito novo → subir 1 tamanho
+    var nota = '';
+    if (!adulto && meses === 'menos-3') {
+      idx = Math.min(idx + 1, 5);
+      nota = 'Sugerimos 1 tamanho a mais para o filhote crescer 🐶';
+    }
+
+    idx = Math.max(0, Math.min(idx, 5));
+    var r = SIZE_TABLE[idx];
+    return { tam: r.tam, pescoco: r.pescoco, largura: r.largura, nota: nota };
+  }
+
+  // ── State ─────────────────────────────────────────────────────────────────
+  var state = { grupo: null, peso: null, adulto: null, meses: null };
+
+  // ── DOM refs ──────────────────────────────────────────────────────────────
+  function $ (id) { return document.getElementById(id); }
+
+  var trigger       = $('sz-quiz-trigger');
+  var triggerText   = $('sz-quiz-trigger-text');
+  var quizArrow     = $('sz-quiz-arrow');
+  var quizBody      = $('sz-quiz-body');
+  var progressBar   = $('sz-quiz-progress-bar');
+  var resultBox     = $('sz-quiz-result');
+  var resultSize    = $('sz-result-size');
+  var resultDetail  = $('sz-result-detail');
+  var resultNote    = $('sz-result-note');
+  var confirmBtn    = $('sz-result-confirm');
+  var restartBtn    = $('sz-quiz-restart');
+
+  // Modal
+  var modal         = $('sz-modal');
+  var modalBackdrop = $('sz-modal-backdrop');
+  var modalClose    = $('sz-modal-close');
+
+  function openModal() { if (modal) { modal.hidden = false; document.body.style.overflow = 'hidden'; } }
+  function closeModal() { if (modal) { modal.hidden = true; document.body.style.overflow = ''; } }
+
+  document.querySelectorAll('.sz-link-medidas').forEach(function (el) {
+    el.addEventListener('click', function (e) { e.preventDefault(); openModal(); });
+  });
+  if (modalClose)    modalClose.addEventListener('click', closeModal);
+  if (modalBackdrop) modalBackdrop.addEventListener('click', closeModal);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+  // ── Quiz open/close ───────────────────────────────────────────────────────
+  if (trigger) {
+    trigger.addEventListener('click', function () {
+      var open = quizBody && !quizBody.hidden;
+      if (quizBody) quizBody.hidden = open;
+      trigger.setAttribute('aria-expanded', !open);
+      if (quizArrow) quizArrow.textContent = open ? '▾' : '▴';
+    });
+  }
+
+  // ── Progress ──────────────────────────────────────────────────────────────
+  function setProgress(pct) {
+    if (progressBar) progressBar.style.width = pct + '%';
+  }
+
+  // ── Show/hide step ────────────────────────────────────────────────────────
+  function showStep(n) {
+    [1, 2, 3, 4].forEach(function (i) {
+      var el = $('sq-step-' + i);
+      if (el) el.hidden = (i !== n);
+    });
+    if (resultBox) resultBox.hidden = true;
+  }
+
+  function showResult(result) {
+    [1, 2, 3, 4].forEach(function (i) {
+      var el = $('sq-step-' + i);
+      if (el) el.hidden = true;
+    });
+    if (resultBox) resultBox.hidden = false;
+    if (resultSize)   resultSize.textContent   = result.tam;
+    if (resultDetail) resultDetail.textContent = 'Pescoço ' + result.pescoco + ' · Largura ' + result.largura;
+    if (resultNote)   resultNote.textContent   = result.nota || '';
+    setProgress(100);
+  }
+
+  // ── Quiz option clicks ────────────────────────────────────────────────────
+  document.querySelectorAll('.sz-opt').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var q   = parseInt(btn.dataset.q);
+      var val = btn.dataset.val;
+
+      // Mark active in this step
+      var stepEl = $('sq-step-' + q);
+      if (stepEl) stepEl.querySelectorAll('.sz-opt').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+
+      if (q === 1) {
+        state.grupo = val;
+        if (val === 'gato') {
+          // Gato → resultado imediato
+          setProgress(100);
+          showResult(calcularTamanho('gato', null, true, null));
+        } else {
+          setProgress(33);
+          showStep(2);
+        }
+      } else if (q === 2) {
+        state.peso = val;
+        setProgress(66);
+        showStep(3);
+      } else if (q === 3) {
+        state.adulto = (val === 'adulto');
+        if (state.adulto) {
+          setProgress(100);
+          showResult(calcularTamanho(state.grupo, state.peso, true, null));
+        } else {
+          setProgress(83);
+          showStep(4);
+        }
+      } else if (q === 4) {
+        state.meses = val;
+        setProgress(100);
+        showResult(calcularTamanho(state.grupo, state.peso, false, val));
+      }
+    });
+  });
+
+  // ── Confirmar tamanho ─────────────────────────────────────────────────────
+  if (confirmBtn) {
+    confirmBtn.addEventListener('click', function () {
+      var tam = resultSize ? resultSize.textContent : null;
+      if (!tam || tam === '—') return;
+
+      // Chamar selectSize do configurador (definido em product-configurator.js)
+      if (typeof window.ameSelectSize === 'function') {
+        window.ameSelectSize(tam);
+      }
+
+      // Atualizar trigger com resultado
+      if (triggerText) triggerText.textContent = '✓ Tamanho sugerido: ' + tam;
+      trigger.setAttribute('aria-expanded', 'false');
+      if (quizBody) quizBody.hidden = true;
+      if (quizArrow) quizArrow.textContent = '▾';
+    });
+  }
+
+  // ── Reiniciar quiz ────────────────────────────────────────────────────────
+  if (restartBtn) {
+    restartBtn.addEventListener('click', function () {
+      state = { grupo: null, peso: null, adulto: null, meses: null };
+      document.querySelectorAll('.sz-opt').forEach(function (b) { b.classList.remove('active'); });
+      if (triggerText) triggerText.textContent = 'Vamos descobrir o tamanho ideal?';
+      setProgress(0);
+      showStep(1);
+    });
+  }
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  showStep(1);
+  setProgress(0);
+
+})();
+</script>

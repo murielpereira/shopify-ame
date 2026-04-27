@@ -1,0 +1,49 @@
+<section class="category-banners">
+  <div class="category-banners__grid">
+    {%- for block in section.blocks -%}
+      <a href="{{ block.settings.link }}" class="category-banner">
+        {%- if block.settings.image != blank -%}
+          <img
+            src="{{ block.settings.image | image_url: width: 1200 }}"
+            alt="{{ block.settings.title }}"
+            loading="lazy"
+          >
+        {%- else -%}
+          <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=1200&q=80" alt="{{ block.settings.title }}" loading="lazy">
+        {%- endif -%}
+        <div class="category-banner__overlay">
+          <h3 class="category-banner__title">{{ block.settings.title }}</h3>
+          <span class="category-banner__link">{{ block.settings.link_text | default: 'Explorar' }}</span>
+        </div>
+      </a>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Banners de categoria",
+  "blocks": [
+    {
+      "type": "banner",
+      "name": "Banner",
+      "settings": [
+        { "type": "image_picker", "id": "image",     "label": "Imagem" },
+        { "type": "text",         "id": "title",     "label": "Título",     "default": "Para cachorros" },
+        { "type": "text",         "id": "link_text", "label": "Texto link", "default": "Explorar" },
+        { "type": "url",          "id": "link",      "label": "Link" }
+      ]
+    }
+  ],
+  "max_blocks": 2,
+  "presets": [
+    {
+      "name": "Banners de categoria",
+      "blocks": [
+        { "type": "banner" },
+        { "type": "banner" }
+      ]
+    }
+  ]
+}
+{% endschema %}

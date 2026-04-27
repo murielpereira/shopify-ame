@@ -1,0 +1,66 @@
+{%- comment -%}
+  Snippet: cfg-personalization
+  Param: id_suffix ('' ou '-opt')
+{%- endcomment -%}
+
+{%- assign sfx = id_suffix | default: '' -%}
+
+<div class="cfg-person-fields" id="person{{ sfx }}">
+  <div class="cfg-person-row">
+
+    <div class="cfg-field">
+      <label for="f-pet{{ sfx }}" class="cfg-field__label">
+        Nome do pet <span aria-hidden="true" class="req">*</span>
+        <span class="char-count" id="cc-pet{{ sfx }}" aria-live="polite">0/12</span>
+      </label>
+      <input
+        type="text"
+        id="f-pet{{ sfx }}"
+        name="properties[Nome do pet]"
+        placeholder="Ex: Luna"
+        maxlength="12"
+        autocomplete="off"
+        data-field="pet"
+        data-suffix="{{ sfx }}"
+        class="cfg-input"
+      >
+      <span class="cfg-field__error" id="err-pet{{ sfx }}" role="alert"></span>
+    </div>
+
+    <div class="cfg-field">
+      <label for="f-tutor{{ sfx }}" class="cfg-field__label">
+        Nome do tutor <span aria-hidden="true" class="req">*</span>
+      </label>
+      <input
+        type="text"
+        id="f-tutor{{ sfx }}"
+        name="properties[Nome do tutor]"
+        placeholder="Ex: Maria"
+        maxlength="20"
+        autocomplete="name"
+        data-field="tutor"
+        data-suffix="{{ sfx }}"
+        class="cfg-input"
+      >
+      <span class="cfg-field__error" id="err-tutor{{ sfx }}" role="alert"></span>
+    </div>
+
+  </div>
+
+  <div class="cfg-field" style="margin-top: 0.75rem;">
+    <label for="f-phone{{ sfx }}" class="cfg-field__label">
+      Telefone do tutor <span aria-hidden="true" class="req">*</span>
+    </label>
+    <input
+      type="tel"
+      id="f-phone{{ sfx }}"
+      name="properties[Telefone do tutor]"
+      placeholder="(48) 99999-9999"
+      inputmode="numeric"
+      data-field="phone"
+      data-suffix="{{ sfx }}"
+      class="cfg-input"
+    >
+    <span class="cfg-field__error" id="err-phone{{ sfx }}" role="alert"></span>
+  </div>
+</div>

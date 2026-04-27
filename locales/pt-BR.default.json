@@ -1,0 +1,19 @@
+{
+  "general": {
+    "continue_shopping": "Continuar comprando",
+    "search": "Buscar"
+  },
+  "cart": {
+    "title": "Sacola",
+    "empty": "Sua sacola está vazia",
+    "checkout": "Finalizar Compra",
+    "subtotal": "Subtotal",
+    "free_shipping_threshold": "Frete grátis acima de R$299"
+  },
+  "products": {
+    "add_to_cart": "Adicionar à sacola",
+    "sold_out": "Esgotado",
+    "unavailable": "Indisponível",
+    "sale": "Oferta"
+  }
+}

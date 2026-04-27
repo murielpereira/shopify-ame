@@ -1,0 +1,51 @@
+<section class="product-grid-section">
+  <div class="container">
+    <div class="section-header">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="section-eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      {%- if section.settings.title != blank -%}
+        <h2 class="section-title">{{ section.settings.title }}</h2>
+      {%- endif -%}
+    </div>
+
+    <div class="product-grid">
+      {%- assign collection_handle = section.settings.collection -%}
+      {%- assign col = collections[collection_handle] -%}
+      {%- assign products_to_show = section.settings.products_to_show | default: 4 -%}
+
+      {%- if col != blank -%}
+        {%- for product in col.products limit: products_to_show -%}
+          {%- render 'product-card', product: product -%}
+        {%- endfor -%}
+      {%- else -%}
+        {%- for product in collections.all.products limit: products_to_show -%}
+          {%- render 'product-card', product: product -%}
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.button_label != blank -%}
+      <div style="text-align:center;margin-top:2.5rem;">
+        <a href="{{ section.settings.button_link | default: '/collections/all' }}" class="btn btn--outline" style="color:var(--color-foreground);border-color:var(--color-foreground);">
+          {{ section.settings.button_label }}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Grade de produtos",
+  "settings": [
+    { "type": "text",       "id": "eyebrow",         "label": "Subtítulo",          "default": "Favoritos dos clientes" },
+    { "type": "text",       "id": "title",            "label": "Título",             "default": "Mais Vendidos" },
+    { "type": "collection", "id": "collection",       "label": "Coleção" },
+    { "type": "range",      "id": "products_to_show", "label": "Qtd de produtos",   "min": 2, "max": 12, "step": 2, "default": 4 },
+    { "type": "text",       "id": "button_label",     "label": "Texto do botão" },
+    { "type": "url",        "id": "button_link",      "label": "Link do botão" }
+  ],
+  "presets": [{ "name": "Grade de produtos" }]
+}
+{% endschema %}
