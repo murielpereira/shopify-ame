@@ -5,8 +5,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Header scroll effect ─────────────────────────────────────────────────
   const header = document.querySelector('.site-header');
   if (header) {
+    let ticking = false;
     window.addEventListener('scroll', () => {
-      header.classList.toggle('scrolled', window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          header.classList.toggle('scrolled', window.scrollY > 20);
+          ticking = false;
+        });
+        ticking = true;
+      }
     }, { passive: true });
   }
 

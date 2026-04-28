@@ -44,7 +44,7 @@
 
   {%- sections 'footer-group' -%}
 
-  {{ 'theme.js' | asset_url | script_tag }}
+  <script src="{{ 'theme.js' | asset_url }}" defer></script>
   {%- if template == 'product' -%}
     <script src="{{ 'product-configurator.js' | asset_url }}" defer></script>
     <script src="{{ 'size-guide.js' | asset_url }}" defer></script>
