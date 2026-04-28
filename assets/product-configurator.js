@@ -363,7 +363,11 @@
       btn.setAttribute('aria-pressed', 'false');
 
       const dotClass = metalMap[m.slug] || 'metal-dot--grafite';
-      btn.innerHTML = `<span class="metal-dot ${dotClass}" aria-hidden="true"></span>${m.label}`;
+      const span = document.createElement('span');
+      span.className = `metal-dot ${dotClass}`;
+      span.setAttribute('aria-hidden', 'true');
+      btn.appendChild(span);
+      btn.appendChild(document.createTextNode(m.label));
 
       btn.addEventListener('click', () => {
         $$('.metal-btn').forEach(b => setPressed(b, false));
