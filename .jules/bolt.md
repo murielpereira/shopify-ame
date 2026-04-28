@@ -1,0 +1,3 @@
+## 2024-05-24 - Defer theme.js and Throttling Scroll Event Listener
+**Learning:** Found a render-blocking script without the `defer` attribute and an un-throttled scroll event listener attached to `window`. These can significantly hurt FCP, TTI, and cause scroll jank. Replacing liquid tags like `{{ 'theme.js' | asset_url | script_tag }}` with an explicit `<script src="{{ 'theme.js' | asset_url }}" defer></script>` improves performance. Adding `requestAnimationFrame` to the scroll event logic ensures smooth layout updates.
+**Action:** Always check `theme.liquid` for un-deferred, render-blocking scripts at the bottom of the body. Always use `requestAnimationFrame` when dealing with scroll event listeners updating DOM state.
