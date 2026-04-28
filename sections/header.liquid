@@ -97,13 +97,13 @@
               <form action="/cart/change" method="post">
                 <input type="hidden" name="id" value="{{ item.variant_id }}">
                 <input type="hidden" name="quantity" value="{{ item.quantity | minus: 1 }}">
-                <button type="submit" class="qty-btn">−</button>
+                <button type="submit" class="qty-btn" aria-label="Diminuir quantidade">−</button>
               </form>
               <span style="font-family:var(--font-body);font-size:0.875rem;width:1.5rem;text-align:center;">{{ item.quantity }}</span>
               <form action="/cart/change" method="post">
                 <input type="hidden" name="id" value="{{ item.variant_id }}">
                 <input type="hidden" name="quantity" value="{{ item.quantity | plus: 1 }}">
-                <button type="submit" class="qty-btn">+</button>
+                <button type="submit" class="qty-btn" aria-label="Aumentar quantidade">+</button>
               </form>
             </div>
           </div>
@@ -118,7 +118,7 @@
     <div class="cart-drawer__footer">
       <!-- Coupon -->
       <div class="coupon-field">
-        <input type="text" placeholder="Código do cupom" data-coupon-input>
+        <input type="text" placeholder="Código do cupom" aria-label="Código do cupom" data-coupon-input>
         <button type="button" data-coupon-apply>Aplicar</button>
       </div>
       <p data-coupon-message style="font-family:var(--font-body);font-size:0.7rem;margin-bottom:0.75rem;min-height:1rem;"></p>
